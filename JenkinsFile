@@ -1,24 +1,102 @@
+
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.9-eclipse-temurin-17'
-        }
+
+    agent any
+
+    parameters {
+        booleanParam(
+            name: 'GENERATE_ALLURE',
+            defaultValue: false,
+            description: 'Activer la génération et la publication du rapport Allure'
+        )
+    }
+
+    environment {
+        DOCKER_HOST = 'tcp://docker:2376'
+        DOCKER_CERT_PATH = '/certs/client'
+        DOCKER_TLS_VERIFY = '1'
     }
 
     stages {
 
-        stage('Préparation du projet') {
+        stage('Vérification') {
             steps {
-                sh 'java -version'
-                sh 'mvn -version'
-                sh 'mvn clean install -DskipTests'
+                sh 'pwd'
+                sh 'ls -la'
+                sh 'ls -la pom.xml'
+            }
+        }
+
+        stage('Build image Selenium') {
+            steps {
+                echo 'Construction de l image Docker Selenium...'
+
+                sh '''
+                    docker build -t demowebshop-selenium:latest .
+                '''
             }
         }
 
         stage('Tests automatisés') {
             steps {
-                sh 'mvn test -Dgroups=smoke'
+                script {
+                    try {
+
+                        echo 'Lancement des tests Selenium + JUnit...'
+
+                        sh '''
+                            docker run --rm \
+                            --shm-size=2g \
+                            -v "$WORKSPACE/target:/app/target" \
+                            demowebshop-selenium:latest
+                        '''
+
+                    } finally {
+
+                        echo 'Fin des tests.'
+                    }
+                }
             }
+        }
+    }
+
+    post {
+
+        always {
+
+            echo 'Archivage des résultats...'
+
+            junit(
+                testResults: 'target/surefire-reports/*.xml',
+                allowEmptyResults: true
+            )
+
+            archiveArtifacts(
+                artifacts: 'target/surefire-reports/**,target/allure-results/**,target/screenshots/**',
+                allowEmptyArchive: true
+            )
+
+            script {
+
+                if (params.GENERATE_ALLURE) {
+
+                    allure(
+                        includeProperties: false,
+                        jdk: '',
+                        results: [
+                            [path: 'target/allure-results']
+                        ]
+                    )
+                }
+            }
+        }
+
+        success {
+            echo 'Les tests Selenium sont terminés avec succès.'
+        }
+
+        failure {
+            echo 'Les tests Selenium ont échoué.'
         }
     }
 }
