@@ -72,48 +72,34 @@ public void completeShoppingJourneyTest() {
 
     registerPage.clickRegisterLink();
 
-    wait.until(
-            ExpectedConditions.urlToBe(
-                    "https://demowebshop.tricentis.com/register"));
+    wait.until(ExpectedConditions.urlToBe( "https://demowebshop.tricentis.com/register"));
 
     registerPage.selectMale();
     registerPage.enterFirstName("yeidr");
     registerPage.enterLastName("benamar");
 
-    String email =
-            "jean" + System.currentTimeMillis() + "@test.com";
+    String email ="yedir" + System.currentTimeMillis() + "@test.com";
 
     registerPage.enterEmail(email);
     registerPage.enterPassword("Yedir1999##!");
     registerPage.enterConfirmPassword("Yedir1999##!");
     registerPage.clickRegisterButton();
 
-    wait.until(
-            ExpectedConditions.urlToBe(
-                    "https://demowebshop.tricentis.com/registerresult/1"));
+    wait.until(ExpectedConditions.urlToBe("https://demowebshop.tricentis.com/registerresult/1"));
 
-    assertEquals(
-            "https://demowebshop.tricentis.com/registerresult/1",
-            driver.getCurrentUrl());
+    assertEquals("https://demowebshop.tricentis.com/registerresult/1",driver.getCurrentUrl());
 
     registerPage.clickContinueButton();
 
-    wait.until(
-            ExpectedConditions.urlToBe(
-                    "https://demowebshop.tricentis.com/"));
+    wait.until(ExpectedConditions.urlToBe("https://demowebshop.tricentis.com/"));
 
-    wait.until(
-            ExpectedConditions.presenceOfElementLocated(
-                    By.cssSelector(".ico-logout")));
+    wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".ico-logout")));
 
-    assertTrue(
-            driver.getPageSource().contains("Log out"));
+    assertTrue(driver.getPageSource().contains("Log out"));
 
     registerPage.clickLogout();
 
-    wait.until(
-            ExpectedConditions.urlToBe(
-                    "https://demowebshop.tricentis.com/"));
+    wait.until(ExpectedConditions.urlToBe("https://demowebshop.tricentis.com/"));
 
     loginPage.clickLoginLink();
 
@@ -126,51 +112,32 @@ public void completeShoppingJourneyTest() {
     loginPage.clickRememberMe();
     loginPage.clickLoginButton();
 
-    wait.until(
-            ExpectedConditions.urlToBe(
-                    "https://demowebshop.tricentis.com/"));
+    wait.until(ExpectedConditions.urlToBe("https://demowebshop.tricentis.com/"));
 
     addCartPage.clickAddToCartFromHome();
 
-    wait.until(
-            ExpectedConditions.urlToBe(
-                    "https://demowebshop.tricentis.com/25-virtual-gift-card"));
+    wait.until(ExpectedConditions.urlToBe("https://demowebshop.tricentis.com/25-virtual-gift-card"));
 
-    assertEquals(
-            "https://demowebshop.tricentis.com/25-virtual-gift-card",
-            driver.getCurrentUrl());
+    assertEquals( "https://demowebshop.tricentis.com/25-virtual-gift-card", driver.getCurrentUrl());
 
     addCartPage.enterRecipientName("Yeidr Benamar");
     addCartPage.enterRecipientEmail(email);
     addCartPage.clickAddToCartButton();
 
-    wait.until(
-            ExpectedConditions.visibilityOfElementLocated(
-                    By.cssSelector("#bar-notification")));
+    wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#bar-notification")));
 
-    assertTrue(
-            addCartPage.getSuccessMessage()
-                    .contains(
-                            "The product has been added to your shopping cart"));
+    assertTrue(addCartPage.getSuccessMessage().contains("The product has been added to your shopping cart"));
 
-    wait.until(
-            ExpectedConditions.invisibilityOfElementLocated(
-                    By.cssSelector("#bar-notification")));
+    wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#bar-notification")));
 
-    wait.until(
-            ExpectedConditions.elementToBeClickable(
-                    By.cssSelector("span.cart-label")));
+    wait.until(ExpectedConditions.elementToBeClickable( By.cssSelector("span.cart-label")));
 
     shoppingCartPage.clickShoppingCart();
 
-    wait.until(
-            ExpectedConditions.urlContains("/cart"));
+    wait.until(ExpectedConditions.urlContains("/cart"));
+shoppingCartPage.selectTermsOfService();shoppingCartPage.clickCheckout();
 
-    shoppingCartPage.selectTermsOfService();
-    shoppingCartPage.clickCheckout();
-
-    wait.until(
-            ExpectedConditions.urlContains("/onepagecheckout"));
+    wait.until(ExpectedConditions.urlContains("/onepagecheckout"));
 
     informationPage.enterCompany("Test Company");
     informationPage.selectCountry();
@@ -180,31 +147,32 @@ public void completeShoppingJourneyTest() {
     informationPage.enterPhoneNumber("0600000000");
     informationPage.clickContinue();
 
-    wait.until(
-            ExpectedConditions.visibilityOfElementLocated(
-                    By.id("paymentmethod_2")));
+    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("paymentmethod_2")));
 
     paymentPage.selectCreditCard();
     paymentPage.clickPaymentMethodContinue();
 
-    wait.until(
-            ExpectedConditions.visibilityOfElementLocated(
-                    By.id("CreditCardType")));
+    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("CreditCardType")));
 
-    paymentPage.selectVisa();
-    paymentPage.enterCardholderName("bahae");
-    paymentPage.enterCardNumber("424242424242");
-    paymentPage.selectExpireYear("2027");
-    paymentPage.enterCardCode("123");
-    paymentPage.clickPaymentInfoContinue();
-    assertEquals("https://demowebshop.tricentis.com/onepagecheckout",driver.getCurrentUrl());
-    wait.until(
-        ExpectedConditions.elementToBeClickable(By.cssSelector("input.confirm-order-next-step-button")
-        )
+paymentPage.selectVisa();
+paymentPage.enterCardholderName("bahae");
+paymentPage.enterCardNumber("424242424242");
+paymentPage.selectExpireMonth("1");
+paymentPage.selectExpireYear("2027");
+paymentPage.enterCardCode("123");
+
+paymentPage.clickPaymentInfoContinue();
+
+wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("input.confirm-order-next-step-button"))
 );
-    paymentPage.clickPaymentInfoContinue();
-    
-    assertEquals("https://demowebshop.tricentis.com/checkout/completed/",driver.getCurrentUrl());
+
+paymentPage.clickConfirmOrder();
+
+wait.until( ExpectedConditions.urlToBe("https://demowebshop.tricentis.com/checkout/completed/")
+);
+
+assertEquals( "https://demowebshop.tricentis.com/checkout/completed/", driver.getCurrentUrl()
+);
 }
 
 @AfterEach
