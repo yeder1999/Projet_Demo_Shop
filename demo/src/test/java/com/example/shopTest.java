@@ -1,5 +1,5 @@
 package com.example;
-
+import org.openqa.selenium.chrome.ChromeOptions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -38,7 +38,16 @@ private PaymentPom paymentPage;
 @BeforeEach
 public void setUp() {
 
-    driver = new ChromeDriver();
+    //driver = new ChromeDriver();
+    // option chrome driver path
+        ChromeOptions options = new ChromeOptions();
+
+    options.addArguments("--headless=new");
+    options.addArguments("--no-sandbox");
+    options.addArguments("--disable-dev-shm-usage");
+    options.addArguments("--disable-gpu");
+
+    driver = new ChromeDriver(options);
 
     driver.manage() .timeouts().implicitlyWait(Duration.ofSeconds(10));
 
