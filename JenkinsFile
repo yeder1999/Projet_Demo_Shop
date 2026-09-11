@@ -1,4 +1,3 @@
-
 pipeline {
 
     agent any
@@ -21,9 +20,12 @@ pipeline {
 
         stage('Vérification') {
             steps {
-                sh 'pwd'
-                sh 'ls -la'
-                sh 'ls -la pom.xml'
+                sh '''
+                    pwd
+                    ls -la
+                    ls -la demo
+                    ls -la demo/pom.xml
+                '''
             }
         }
 
@@ -47,7 +49,7 @@ pipeline {
                         sh '''
                             docker run --rm \
                             --shm-size=2g \
-                            -v "$WORKSPACE/target:/app/target" \
+                            -v "$WORKSPACE/demo/target:/app/target" \
                             demowebshop-selenium:latest
                         '''
 
@@ -67,12 +69,12 @@ pipeline {
             echo 'Archivage des résultats...'
 
             junit(
-                testResults: 'target/surefire-reports/*.xml',
+                testResults: 'demo/target/surefire-reports/*.xml',
                 allowEmptyResults: true
             )
 
             archiveArtifacts(
-                artifacts: 'target/surefire-reports/**,target/allure-results/**,target/screenshots/**',
+                artifacts: 'demo/target/surefire-reports/**,demo/target/allure-results/**,demo/target/screenshots/**',
                 allowEmptyArchive: true
             )
 
@@ -84,7 +86,7 @@ pipeline {
                         includeProperties: false,
                         jdk: '',
                         results: [
-                            [path: 'target/allure-results']
+                            [path: 'demo/target/allure-results']
                         ]
                     )
                 }
