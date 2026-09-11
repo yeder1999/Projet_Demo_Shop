@@ -1,27 +1,40 @@
 pipeline {
 
-    agent any
+    agent {
+        docker {
+            image 'maven:3.9-eclipse-temurin-17'
+            args '--shm-size=2g'
+        }
+    }
 
     parameters {
         booleanParam(
             name: 'GENERATE_ALLURE',
             defaultValue: false,
-            description: 'Activer la génération et la publication du rapport Allure'
+            description: 'Activer la génération du rapport Allure'
         )
-    }
-
-    environment {
-        DOCKER_HOST = 'tcp://docker:2376'
-        DOCKER_CERT_PATH = '/certs/client'
-        DOCKER_TLS_VERIFY = '1'
     }
 
     stages {
 
-        stage('Vérification') {
+        stage('Préparation') {
             steps {
                 sh '''
-                    pwd
+                    apt-get update
+                    apt-get install -y wget gnupg ca-certificates
+
+                    wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | \
+                    gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg
+
+                    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" \
+                    > /etc/apt/sources.list.d/google-chrome.list
+
+                    apt-get update
+                    apt-get install -y google-chrome-stable
+
+                    google-chrome --version
+                    mvn --version
+
                     ls -la
                     ls -la demo
                     ls -la demo/pom.xml
@@ -29,34 +42,12 @@ pipeline {
             }
         }
 
-        stage('Build image Selenium') {
+        stage('Tests Selenium') {
             steps {
-                echo 'Construction de l image Docker Selenium...'
-
-                sh '''
-                    docker build -t demowebshop-selenium:latest .
-                '''
-            }
-        }
-
-        stage('Tests automatisés') {
-            steps {
-                script {
-                    try {
-
-                        echo 'Lancement des tests Selenium + JUnit...'
-
-                        sh '''
-                            docker run --rm \
-                            --shm-size=2g \
-                            -v "$WORKSPACE/demo/target:/app/target" \
-                            demowebshop-selenium:latest
-                        '''
-
-                    } finally {
-
-                        echo 'Fin des tests.'
-                    }
+                dir('demo') {
+                    sh '''
+                        mvn clean test
+                    '''
                 }
             }
         }
@@ -65,8 +56,6 @@ pipeline {
     post {
 
         always {
-
-            echo 'Archivage des résultats...'
 
             junit(
                 testResults: 'demo/target/surefire-reports/*.xml',

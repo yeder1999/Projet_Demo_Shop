@@ -1,5 +1,5 @@
 package com.example;
-import org.openqa.selenium.chrome.ChromeOptions;
+//import org.openqa.selenium.chrome.ChromeOptions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -38,16 +38,16 @@ private PaymentPom paymentPage;
 @BeforeEach
 public void setUp() {
 
-    //driver = new ChromeDriver();
+    driver = new ChromeDriver();
     // option chrome driver path
-        ChromeOptions options = new ChromeOptions();
+    // ChromeOptions options = new ChromeOptions();
 
-    options.addArguments("--headless=new");
-    options.addArguments("--no-sandbox");
-    options.addArguments("--disable-dev-shm-usage");
-    options.addArguments("--disable-gpu");
+    //options.addArguments("--headless=new");
+    //options.addArguments("--no-sandbox");
+    //options.addArguments("--disable-dev-shm-usage");
+    //options.addArguments("--disable-gpu");
 
-    driver = new ChromeDriver(options);
+   // driver = new ChromeDriver(options);
 
     driver.manage() .timeouts().implicitlyWait(Duration.ofSeconds(10));
 
@@ -69,13 +69,9 @@ public void setUp() {
 @Tag("smoke")
 public void completeShoppingJourneyTest() {
 
-    wait.until(
-            ExpectedConditions.urlToBe(
-                    "https://demowebshop.tricentis.com/"));
+    wait.until(ExpectedConditions.urlToBe("https://demowebshop.tricentis.com/"));
 
-    assertEquals(
-            "https://demowebshop.tricentis.com/",
-            driver.getCurrentUrl());
+    assertEquals("https://demowebshop.tricentis.com/",driver.getCurrentUrl());
 
     registerPage.clickRegisterLink();
 
@@ -110,10 +106,8 @@ public void completeShoppingJourneyTest() {
 
     loginPage.clickLoginLink();
 
-    wait.until(
-            ExpectedConditions.urlToBe(
-                    "https://demowebshop.tricentis.com/login"));
-
+    wait.until(ExpectedConditions.urlToBe("https://demowebshop.tricentis.com/login"));
+    //methode optimal apres 
     loginPage.enterEmail(email);
     loginPage.enterPassword("Yedir1999##!");
     loginPage.clickRememberMe();
@@ -161,12 +155,12 @@ shoppingCartPage.selectTermsOfService();shoppingCartPage.clickCheckout();
 
     wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("CreditCardType")));
 
-paymentPage.selectVisa();
-paymentPage.enterCardholderName("bahae");
-paymentPage.enterCardNumber("424242424242");
-paymentPage.selectExpireMonth("1");
-paymentPage.selectExpireYear("2027");
-paymentPage.enterCardCode("123");
+    paymentPage.selectVisa();
+    paymentPage.enterCardholderName("bahae");
+    paymentPage.enterCardNumber("424242424242");
+    paymentPage.selectExpireMonth("1");
+    paymentPage.selectExpireYear("2027");
+    paymentPage.enterCardCode("123");
 
 paymentPage.clickPaymentInfoContinue();
 
