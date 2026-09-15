@@ -3,6 +3,7 @@ package com.example;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.net.MalformedURLException;
 import java.time.Duration;
 
 import org.junit.jupiter.api.AfterEach;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -38,16 +40,15 @@ private PaymentPom paymentPage;
 @BeforeEach
 public void setUp() {
 
-    driver = new ChromeDriver();
-    // option chrome driver path
-    // ChromeOptions options = new ChromeOptions();
+   URL gridUrl = null;
 
-    //options.addArguments("--headless=new");
-    //options.addArguments("--no-sandbox");
-    //options.addArguments("--disable-dev-shm-usage");
-    //options.addArguments("--disable-gpu");
+         try {
+        gridUrl = new URL("http://127.0.0.1:4444");
+         } catch (MalformedURLException e) {
+        e.printStackTrace();
+        }
 
-   // driver = new ChromeDriver(options);
+    ChromeOptions cr = new ChromeOptions();
 
     driver.manage() .timeouts().implicitlyWait(Duration.ofSeconds(10));
 

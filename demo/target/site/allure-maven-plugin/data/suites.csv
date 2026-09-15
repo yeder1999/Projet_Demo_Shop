@@ -1,0 +1,2 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"passed","Sat Sep 12 09:11:57 CEST 2026","Sat Sep 12 09:13:08 CEST 2026","71009","","com.example.shopTest","","com.example.shopTest","completeShoppingJourneyTest","completeShoppingJourneyTest()",""
